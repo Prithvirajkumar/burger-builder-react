@@ -4,6 +4,8 @@ import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
+import axios from "../../axios-orders";
+import Spinner from "../../components/UI/Spinner/Spinner";
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -30,6 +32,10 @@ const BurgerBuilder = () => {
 
   const [purchasingState, setPurchasingState] = useState({
     purchasing: false,
+  });
+
+  const [loadingState, setLoadingState] = useState({
+    loading: false,
   });
 
   const updatePurchaseState = (ingredients) => {
@@ -85,7 +91,39 @@ const BurgerBuilder = () => {
   };
 
   const purchaseContinueHandler = () => {
-    alert("Continuing");
+    setLoadingState({
+      loading: true,
+    });
+    const order = {
+      ingredients: ingredients,
+      price: price.totalPrice,
+      customer: {
+        name: "Prithvi",
+        address: "Toronto",
+      },
+      email: "test@test.com",
+      delivery: "Express",
+    };
+    axios
+      .post("/orders.json", order)
+      .then(
+        (response) =>
+          setLoadingState({
+            loading: false,
+          }),
+        setPurchasingState({
+          purchasing: false,
+        })
+      )
+      .catch(
+        (error) =>
+          setLoadingState({
+            loading: false,
+          }),
+        setPurchasingState({
+          purchasing: false,
+        })
+      );
   };
 
   const disabledInfo = {
@@ -96,18 +134,26 @@ const BurgerBuilder = () => {
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
 
+  let orderSummary = (
+    <OrderSummary
+      ingredients={ingredients}
+      price={price.totalPrice}
+      purchaseCanceled={purchaseCancelHandler}
+      purchaseContinued={purchaseContinueHandler}
+    ></OrderSummary>
+  );
+
+  if (loadingState.loading) {
+    orderSummary = <Spinner></Spinner>;
+  }
+
   return (
     <Aux>
       <Modal
         show={purchasingState.purchasing}
         modalClosed={purchaseCancelHandler}
       >
-        <OrderSummary
-          ingredients={ingredients}
-          price={price.totalPrice}
-          purchaseCanceled={purchaseCancelHandler}
-          purchaseContinued={purchaseContinueHandler}
-        ></OrderSummary>
+        {orderSummary}
       </Modal>
       <Burger ingredients={ingredients}></Burger>
       <BuildControls

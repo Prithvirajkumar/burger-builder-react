@@ -14,7 +14,7 @@ const INGREDIENT_PRICES = {
   bacon: 0.7,
 };
 
-const BurgerBuilder = () => {
+const BurgerBuilder = (props) => {
   const [ingredients, setIngredients] = useState({
     salad: 0,
     bacon: 0,
@@ -91,39 +91,50 @@ const BurgerBuilder = () => {
   };
 
   const purchaseContinueHandler = () => {
-    setLoadingState({
-      loading: true,
-    });
-    const order = {
-      ingredients: ingredients,
-      price: price.totalPrice,
-      customer: {
-        name: "Prithvi",
-        address: "Toronto",
-      },
-      email: "test@test.com",
-      delivery: "Express",
-    };
-    axios
-      .post("/orders.json", order)
-      .then(
-        (response) =>
-          setLoadingState({
-            loading: false,
-          }),
-        setPurchasingState({
-          purchasing: false,
-        })
-      )
-      .catch(
-        (error) =>
-          setLoadingState({
-            loading: false,
-          }),
-        setPurchasingState({
-          purchasing: false,
-        })
+    // setLoadingState({
+    //   loading: true,
+    // });
+    // const order = {
+    //   ingredients: ingredients,
+    //   price: price.totalPrice,
+    //   customer: {
+    //     name: "Prithvi",
+    //     address: "Toronto",
+    //   },
+    //   email: "test@test.com",
+    //   delivery: "Express",
+    // };
+    // axios
+    //   .post("/orders.json", order)
+    //   .then(
+    //     (response) =>
+    //       setLoadingState({
+    //         loading: false,
+    //       }),
+    //     setPurchasingState({
+    //       purchasing: false,
+    //     })
+    //   )
+    //   .catch(
+    //     (error) =>
+    //       setLoadingState({
+    //         loading: false,
+    //       }),
+    //     setPurchasingState({
+    //       purchasing: false,
+    //     })
+    //   );
+    const queryParams = [];
+    for (let i in ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) + "=" + encodeURIComponent(ingredients[i])
       );
+    }
+    const queryString = queryParams.join("&");
+    props.history.push({
+      pathname: "/checkout",
+      search: "?" + queryString,
+    });
   };
 
   const disabledInfo = {

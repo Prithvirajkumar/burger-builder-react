@@ -7,12 +7,7 @@ const CheckoutSummary = (props) => {
   return (
     <div className={classes.CheckoutSummary}>
       <h1>We hope you like it</h1>
-      <div
-        style={{
-          width: "100%",
-          margin: "auto",
-        }}
-      >
+      <div className={classes.Burger}>
         <Burger ingredients={props.ingredients}></Burger>
       </div>
       <Button

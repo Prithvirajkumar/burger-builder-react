@@ -4,7 +4,6 @@ import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
-import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 
 const INGREDIENT_PRICES = {
@@ -91,45 +90,13 @@ const BurgerBuilder = (props) => {
   };
 
   const purchaseContinueHandler = () => {
-    // setLoadingState({
-    //   loading: true,
-    // });
-    // const order = {
-    //   ingredients: ingredients,
-    //   price: price.totalPrice,
-    //   customer: {
-    //     name: "Prithvi",
-    //     address: "Toronto",
-    //   },
-    //   email: "test@test.com",
-    //   delivery: "Express",
-    // };
-    // axios
-    //   .post("/orders.json", order)
-    //   .then(
-    //     (response) =>
-    //       setLoadingState({
-    //         loading: false,
-    //       }),
-    //     setPurchasingState({
-    //       purchasing: false,
-    //     })
-    //   )
-    //   .catch(
-    //     (error) =>
-    //       setLoadingState({
-    //         loading: false,
-    //       }),
-    //     setPurchasingState({
-    //       purchasing: false,
-    //     })
-    //   );
     const queryParams = [];
     for (let i in ingredients) {
       queryParams.push(
         encodeURIComponent(i) + "=" + encodeURIComponent(ingredients[i])
       );
     }
+    queryParams.push("price=" + price.totalPrice);
     const queryString = queryParams.join("&");
     props.history.push({
       pathname: "/checkout",
